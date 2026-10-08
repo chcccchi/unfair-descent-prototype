@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>百层试炼</title>
+  <style>
+    :root { --ink:#e9edf7; --muted:#9aa6c0; --panel:rgba(16,22,42,.9); --gold:#ffd166; --mint:#64e6c0; --danger:#ff6b80; --brass:#bf7c2d; }
+    * { box-sizing:border-box } body { margin:0; min-height:100vh; color:var(--ink); font-family:"Microsoft YaHei",system-ui,sans-serif; background:linear-gradient(#080d1ae8,#080b17f2),url('assets/tower-shaft-pixel.png') center top/cover fixed; }
+    .app { width:min(1260px,100%); margin:auto; padding:22px; display:grid; grid-template-columns:.68fr 1.45fr .9fr; gap:18px; }
+    .hero,.panel { background:rgba(10,14,24,.88); border:1px solid rgba(203,215,239,.18); box-shadow:0 18px 42px #0008, inset 0 1px rgba(255,255,255,.05); border-radius:16px; }
+    .panel{position:relative;overflow:hidden}.panel::before,.panel::after{display:none}
+    .hero { padding:28px; min-height:650px; position:relative; overflow:hidden; }
+    .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,#405da222,transparent 60%);pointer-events:none}.hero>*{position:relative}
+    h1 { margin:0; font-family:Georgia,"STKaiti",serif;font-size:clamp(30px,6vw,53px); letter-spacing:5px; text-align:center; color:#f2f5fb; text-shadow:0 2px 18px #7397d555; }
+    .sub { text-align:center; color:#9facbf; margin:7px 0 25px; font-size:13px; letter-spacing:.5px; }
+    .tower { height:315px; position:relative; display:flex; justify-content:center; align-items:flex-end; margin:10px 0 20px; }
+    .shaft { width:min(250px,67vw); height:290px; border:6px solid #758bc9; border-bottom:0; border-radius:125px 125px 0 0; background:linear-gradient(#07112770,#071127b8),url('assets/tower-shaft-pixel.png') center/cover; overflow:hidden; position:relative; box-shadow:inset 0 0 45px #000,0 0 35px #6d8df344; }
+    .world { position:absolute; left:0; right:0; top:0; height:700px; background:linear-gradient(90deg,#07102499,transparent 35% 65%,#07102499); transition:transform .7s cubic-bezier(.2,.9,.2,1); }
+    .floor-line { position:absolute; left:12px; right:12px; height:4px; background:linear-gradient(90deg,#273965,#b4c6ff,#273965); box-shadow:0 4px 10px #0008; }
+    .floor-line span { position:absolute; right:8px; bottom:7px; font-size:11px; color:#b7c7ef; font-weight:bold; }
+    .floor-line::after { content:"↓"; position:absolute; left:12px; bottom:4px; color:#ffd166; opacity:.72; }
+    .glow { position:absolute; width:120px;height:120px;border-radius:50%; background:#8ca9ff35; filter:blur(18px); left:50%; transform:translateX(-50%); top:0; }
+    .runner { position:absolute; left:50%; width:70px;height:87px; transform:translateX(-50%); transition:top .7s cubic-bezier(.2,.9,.2,1), transform .25s; filter:drop-shadow(0 6px 2px #0008); z-index:2; }.runner img{width:100%;height:100%;object-fit:contain}
+    .runner.walk { animation:walk .22s 2 alternate } @keyframes walk { to { transform:translate(-50%,8px) scale(1.08,.92) } }
+    .floor-chip { text-align:center; font-family:Georgia,"STKaiti",serif;font-weight:800; font-size:24px; color:#f1f4fa; text-shadow:none; background:none; border:0;padding:6px; }
+    .floor-chip small { display:block; color:var(--muted); font-size:12px; margin-top:5px; font-weight:normal; }
+    .meters { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin:18px 0; }
+    .stat { padding:13px 12px; background:rgba(255,255,255,.045);border-radius:10px; text-align:center; border:1px solid rgba(213,224,246,.12); box-shadow:none; position:relative; }.stat::before,.stat::after{display:none}
+    .stat b { display:block; color:var(--gold); font-size:22px; margin-top:3px; }
+    .chance { margin:16px 0 9px; background:rgba(255,255,255,.035);border:1px solid rgba(213,224,246,.1);border-radius:10px;padding:13px 15px 11px; } .labelrow { display:flex;justify-content:space-between;color:#cad4e8;font-size:13px;margin-bottom:7px; }.chance-detail{display:block;color:#8190b6;font-size:11px;margin-top:6px;text-align:center}
+    .bar { height:9px;background:#060a12;border-radius:99px;overflow:hidden;border:0;box-shadow:inset 0 1px 4px #000 }.fill { height:100%;width:0;background:linear-gradient(90deg,#8aa6e6,#d4dcf2);box-shadow:none;transition:width .35s; }
+    button { border:1px solid rgba(230,237,250,.25); cursor:pointer; font:inherit; font-weight:700; color:#f5f7fb; border-radius:9px; padding:15px; background:#dbe3f5;box-shadow:none; transition:transform .12s, filter .12s; text-shadow:none; color:#172033; }
+    button:active { transform:translateY(5px); box-shadow:0 2px 0 #ae6a1d; } button:disabled { cursor:not-allowed; filter:grayscale(.75); }
+    #descend { width:100%; font-size:20px; margin:16px 0 8px; letter-spacing:2px; clip-path:polygon(2% 0,98% 0,100% 18%,100% 82%,98% 100%,2% 100%,0 82%,0 18%); } .log { height:58px; text-align:center;color:#b7c6e8; font-size:14px; padding:12px 8px;background:#080e1c99;border-top:1px solid #53699d55;border-bottom:1px solid #53699d55; }
+    .dialogue { margin-top:6px; display:grid; grid-template-columns:52px 1fr; gap:10px; padding:4px; background:transparent;border:0;border-radius:0;box-shadow:none; }
+    .npc { width:50px;height:50px;display:grid;place-items:center;border-radius:50%;background:#32235d;overflow:hidden;box-shadow:0 0 16px #8f7cff88;border:1px solid #b792ff88; }.npc img{width:100%;height:100%;object-fit:cover;object-position:52% 24%;transform:scale(1.35)}
+    .dialogue b { font-size:13px;color:#b9caff }.dialogue p { margin:3px 0 7px;color:#e1e8ff;font-size:13px;line-height:1.4; }.talk-choices{grid-column:1 / -1;display:flex;gap:7px;flex-wrap:wrap}.talk-choices button{padding:6px 9px;border-radius:9px;font-size:11px;color:#cbd8ff;background:#283c70;box-shadow:0 3px 0 #15264c}.talk-choices button:active{box-shadow:0 1px 0 #15264c}
+    .side { display:flex; flex-direction:column; gap:18px; }.panel { padding:21px; }.panel h2 { margin:0 0 10px;font-family:Georgia,"STKaiti",serif;font-size:18px;color:#edf1f8;letter-spacing:.5px;border-bottom:1px solid rgba(218,227,244,.11);padding-bottom:10px; }.panel h2::before{content:"";margin:0}.panel p { color:#94a1b4;font-size:13px;margin:0 0 14px;line-height:1.55; }
+    .records{max-height:355px;overflow:auto;padding:0 5px 0 3px}.records::-webkit-scrollbar{width:5px}.records::-webkit-scrollbar-thumb{background:#88703e;border-radius:5px}.record{padding:9px 4px 9px 12px;border-bottom:1px solid #46547a66;color:#c9d4ef;font-size:12px;line-height:1.4;position:relative}.record::before{content:"";position:absolute;left:0;top:14px;width:5px;height:5px;background:#7893d0;transform:rotate(45deg)}.record:first-child{color:#ffe29b}.record:first-child::before{background:#ffca58;box-shadow:0 0 8px #ffca58}.record time{display:block;color:#7180a5;font-size:10px;margin-bottom:2px}.left .dialogue{margin:0}.left .talk-choices button{font-size:10px}
+    .upgrade { background:rgba(255,255,255,.04);border:1px solid rgba(213,224,246,.1);border-radius:10px;padding:13px 13px 13px 18px;display:grid;grid-template-columns:1fr auto;gap:7px;align-items:center;margin-top:9px;position:relative;box-shadow:none; }.upgrade::before{content:"";position:absolute;left:0;top:13px;width:3px;height:29px;background:#93a9dc;border-radius:99px}.upgrade strong { font-size:14px;color:#e8edf7; }.upgrade span { grid-column:1;color:#91a0b5;font-size:12px; }.upgrade button { grid-row:1 / span 2; grid-column:2; padding:9px; font-size:12px; box-shadow:none; }.upgrade button:active { transform:translateY(2px);box-shadow:none; }
+    .toast { position:fixed;left:50%;top:22px;transform:translate(-50%,-120px);background:#263968;color:white;padding:12px 18px;border-radius:99px;transition:.3s;z-index:3;box-shadow:0 8px 25px #0008; }.toast.show{transform:translate(-50%,0)}
+    .win { position:absolute;inset:0;background:#101936ed;display:none;place-items:center;text-align:center;padding:30px;z-index:2 }.win h2{font-size:38px;color:var(--gold);margin:0}.win p{color:var(--muted)}
+    @media (max-width:960px){.app{grid-template-columns:1fr 1fr}.left{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr}.left .panel{min-width:0}}@media (max-width:620px){.app{grid-template-columns:1fr;padding:12px}.left{display:flex}.hero{min-height:0}.tower{height:265px}.shaft{height:240px}.side{gap:12px}}
+  </style>
+</head>
+<body>
+  <div class="toast" id="toast"></div>
+  <main class="app">
+    <aside class="side left">
+      <section class="panel"><h2>下潜记录</h2><p>塔不会解释结果；这里只记录发生过什么。</p><div class="records" id="records"></div></section>
+      <section class="panel"><div class="dialogue"><div class="npc"><img src="assets/tower-keeper-pixel.png" alt="塔的看守" /></div><div><b>塔的看守</b><p id="sageText">概率是诚实的。它只是不在乎你。</p></div><div class="talk-choices"><button onclick="speak('money')">钱怎么来？</button><button onclick="speak('risk')">失败会怎样？</button><button onclick="speak('goal')">为什么要继续？</button></div></div></section>
+    </aside>
+    <section class="hero">
+      <h1>不公正下潜</h1><div class="sub">一座讨厌你的塔。连续走完 9 段楼梯，抵达第 10 层。</div>
+      <div class="tower"><div class="shaft"><div class="world" id="world"><div class="glow"></div><div id="floors"></div><div class="runner" id="runner"><img src="assets/player-climber-pixel.png" alt="下潜者" /></div></div></div></div>
+      <div class="floor-chip">第 <span id="floor">1</span> 层 <small>连续下潜 <span id="streak">0</span> 次 · 目标：第 10 层</small></div>
+      <div class="meters"><div class="stat">金币<b>🪙 <span id="coins">0</span></b></div><div class="stat">最高纪录<b><span id="best">1</span> 层</b></div></div>
+      <div class="chance"><div class="labelrow"><span>下一段楼梯通过率</span><b id="chanceText">20%</b></div><div class="bar"><div class="fill" id="chanceFill"></div></div><small class="chance-detail" id="chanceDetail"></small></div>
+      <button id="descend">赌一次下一层 ↓</button><div class="log" id="log">20%。你不会知道这一按会不会把连胜全部归零。</div>
+      <div class="win" id="win"><div><h2>你抵达了第 10 层！</h2><p>九次连续成功。塔暂时无话可说。</p><button onclick="document.getElementById('win').style.display='none'">继续挑战</button></div></div>
+    </section>
+    <aside class="side">
+      <section class="panel"><h2>把概率买回来</h2><p>金币永远保留。失败会清空连胜，但不会给保底；只有升级能改变你的赔率。</p><div id="upgrades"></div></section>
+      <section class="panel"><h2>规则</h2><p>每次点击独立按显示概率判定。成功：下到下一层并获得金币；失败：回到第 1 层、连胜清零。第 10 层前没有任何保证。</p><button id="reset" style="background:#b4c0dc;box-shadow:0 4px 0 #617092;padding:10px;width:100%">重开存档</button></section>
+    </aside>
+  </main>
+<script>
+const $=id=>document.getElementById(id);
+let s=JSON.parse(localStorage.getItem('hundredFloors')||'null')||{floor:1,best:1,coins:0,levels:{odds:0,coin:0,combo:0,speed:0}};
+if(!s.levels.odds){s.levels={odds:s.levels.luck||0,coin:s.levels.gold||0,combo:0,speed:s.levels.speed||0}}
+s.checkpoint=1;if(s.floor>10)s.floor=1;if(s.best>10)s.best=1;
+if(!Array.isArray(s.seenMilestones))s.seenMilestones=[];
+const data=[
+ ['odds','偏心骰','通过率 +5%',l=>10+12*l],['coin','黄铜通行证','每次成功基础金币 +1',l=>10+14*l],['combo','连胜印记','每层连胜金币额外 +10%',l=>22+24*l],['speed','急躁的脚','更快地再试一次',l=>16+16*l]
+]; let busy=false,autoTimer,walkTimer;
+let history=['准备进入塔。通过率由概率决定，不由意志决定。'];
+const milestoneLines={2:'哇，第二层。你大概已经开始相信自己很特别了。',5:'五层。别急着庆祝，统计学还没有注意到你。',8:'八层。现在失败会非常有戏剧性。',9:'第九层。只差一次。塔终于开始认真看你了。',10:'第十层。九次连续成功。概率输了这一次，但它不会道歉。'};
+function save(){localStorage.setItem('hundredFloors',JSON.stringify(s))}
+function chance(){return Math.min(99,20+s.levels.odds*5)}
+function gain(){return Math.max(1,Math.floor((1+s.levels.coin)*(1+(s.floor-1)*s.levels.combo*.1)))}
+function render(){
+ const y=(s.floor-1)*70, camera=Math.max(0,y-108);
+ $('floor').textContent=s.floor;$('streak').textContent=s.floor-1;$('best').textContent=s.best;$('coins').textContent=s.coins;$('chanceText').textContent=chance()+'%';$('chanceFill').style.width=chance()+'%';$('chanceDetail').textContent=`真实概率：基础 20% + 偏心骰 ${s.levels.odds*5}%${chance()===99?'（最高 99%，仍可能失败）':''}`; $('world').style.transform=`translateY(${-camera}px)`;$('runner').style.top=(y+18)+'px';
+ $('upgrades').innerHTML=data.map(([key,title,desc,cost])=>{const c=cost(s.levels[key]);return `<div class="upgrade"><strong>${title} Lv.${s.levels[key]}</strong><span>${desc}</span><button onclick="buy('${key}')">🪙 ${c}</button></div>`}).join('');
+ $('descend').disabled=busy;$('descend').textContent=busy?'骰子在转…':'赌一次下一层 ↓';save();
+}
+function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1700)}
+function record(text){const now=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});history.unshift({text,now});history=history.slice(0,18);$('records').innerHTML=history.map(item=>typeof item==='string'?`<div class="record">${item}</div>`:`<div class="record"><time>${item.now}</time>${item.text}</div>`).join('')}
+function speak(topic){const lines={money:'每成功下一层，你就拿到金币；升级让每次成功更值钱。钱不会因失败消失。',risk:'失败就回到入口，连胜归零。没有保底，没有怜悯，也没有“下一次更容易”。',goal:'因为你刚才差一点就赢了。也可能不是。再按一次看看？',upgrade:'不错。你没有改变命运，只是让硬币少讨厌你一点。',success:'又一层。连胜让金币更响，但别以为塔开始喜欢你了。',fail:'断了。它从不承诺公平；而你仍然会再按一次。'};$('sageText').textContent=lines[topic]||lines.goal}
+function maybeMilestone(floor){const line=milestoneLines[floor];if(!line||s.seenMilestones.includes(floor))return;s.seenMilestones.push(floor);$('sageText').textContent=line;record(`🎭 看守：${line}`)}
+function buy(k){const row=data.find(x=>x[0]===k),cost=row[3](s.levels[k]);if(s.coins<cost){speak('money');return toast('金币还不够，再闯几层！')}s.coins-=cost;s.levels[k]++;record(`升级：${row[1]} 升至 Lv.${s.levels[k]}。`);speak('upgrade');toast('升级完成：'+row[1]);render()}
+function descend(){if(busy||s.floor>=10)return;busy=true;render();$('runner').classList.add('walk');setTimeout(()=>{$('runner').classList.remove('walk');const ok=Math.random()*100<chance();if(ok){const g=gain();s.coins+=g;s.floor++;s.best=Math.max(s.best,s.floor);record(`↓ 成功到达第 ${s.floor} 层，+${g} 枚金币。`);$('log').textContent=`成功！${s.floor-1} 连胜，获得 ${g} 枚金币。`;speak('success');maybeMilestone(s.floor);toast('↓ 又下一层');if(s.floor>=10)$('win').style.display='grid'}else{record(`✕ 第 ${s.floor} 层失败，回到第 1 层。`);$('log').textContent='失败。连胜归零，回到第 1 层。';speak('fail');toast('✕ 连胜断掉，回到入口');s.floor=1}busy=false;render()},Math.max(140,650-s.levels.speed*85))}
+function setupAuto(){}
+function buildTower(){ $('floors').innerHTML=Array.from({length:10},(_,i)=>`<div class="floor-line" style="top:${i*70}px"><span>${i+1} 层</span></div>`).join('') }
+$('descend').onclick=descend;$('reset').onclick=()=>{if(confirm('确定清空所有进度吗？')){localStorage.removeItem('hundredFloors');location.reload()}};buildTower();record(history[0]);render();
+</script>
+</body></html>
