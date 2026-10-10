@@ -6,7 +6,7 @@
   <title>百层试炼</title>
   <style>
     :root { --ink:#e9edf7; --muted:#9aa6c0; --panel:rgba(16,22,42,.9); --gold:#ffd166; --mint:#64e6c0; --danger:#ff6b80; --brass:#bf7c2d; }
-    * { box-sizing:border-box } body { margin:0; min-height:100vh; color:var(--ink); font-family:"Microsoft YaHei",system-ui,sans-serif; background:linear-gradient(#080d1ae8,#080b17f2),url('assets/tower-shaft-pixel.png') center top/cover fixed; }
+    * { box-sizing:border-box } body { margin:0; min-height:100vh; color:var(--ink); font-family:"Microsoft YaHei",system-ui,sans-serif; background:linear-gradient(#080d1ae8,#080b17f2),url('tower-shaft-pixel.png') center top/cover fixed; }
     .app { width:min(1260px,100%); margin:auto; padding:22px; display:grid; grid-template-columns:.68fr 1.45fr .9fr; gap:18px; }
     .hero,.panel { background:rgba(10,14,24,.88); border:1px solid rgba(203,215,239,.18); box-shadow:0 18px 42px #0008, inset 0 1px rgba(255,255,255,.05); border-radius:16px; }
     .panel{position:relative;overflow:hidden}.panel::before,.panel::after{display:none}
@@ -15,13 +15,14 @@
     h1 { margin:0; font-family:Georgia,"STKaiti",serif;font-size:clamp(30px,6vw,53px); letter-spacing:5px; text-align:center; color:#f2f5fb; text-shadow:0 2px 18px #7397d555; }
     .sub { text-align:center; color:#9facbf; margin:7px 0 25px; font-size:13px; letter-spacing:.5px; }
     .tower { height:315px; position:relative; display:flex; justify-content:center; align-items:flex-end; margin:10px 0 20px; }
-    .shaft { width:min(250px,67vw); height:290px; border:6px solid #758bc9; border-bottom:0; border-radius:125px 125px 0 0; background:linear-gradient(#07112770,#071127b8),url('assets/tower-shaft-pixel.png') center/cover; overflow:hidden; position:relative; box-shadow:inset 0 0 45px #000,0 0 35px #6d8df344; }
+    .shaft { width:min(250px,67vw); height:290px; border:6px solid #758bc9; border-bottom:0; border-radius:125px 125px 0 0; background:linear-gradient(#07112770,#071127b8),url('tower-shaft-pixel.png') center/cover; overflow:hidden; position:relative; box-shadow:inset 0 0 45px #000,0 0 35px #6d8df344; }
     .world { position:absolute; left:0; right:0; top:0; height:700px; background:linear-gradient(90deg,#07102499,transparent 35% 65%,#07102499); transition:transform .7s cubic-bezier(.2,.9,.2,1); }
     .floor-line { position:absolute; left:12px; right:12px; height:4px; background:linear-gradient(90deg,#273965,#b4c6ff,#273965); box-shadow:0 4px 10px #0008; }
     .floor-line span { position:absolute; right:8px; bottom:7px; font-size:11px; color:#b7c7ef; font-weight:bold; }
     .floor-line::after { content:"↓"; position:absolute; left:12px; bottom:4px; color:#ffd166; opacity:.72; }
     .glow { position:absolute; width:120px;height:120px;border-radius:50%; background:#8ca9ff35; filter:blur(18px); left:50%; transform:translateX(-50%); top:0; }
-    .runner { position:absolute; left:50%; width:70px;height:87px; transform:translateX(-50%); transition:top .7s cubic-bezier(.2,.9,.2,1), transform .25s; filter:drop-shadow(0 6px 2px #0008); z-index:2; }.runner img{width:100%;height:100%;object-fit:contain}
+    .runner { position:absolute; left:50%; width:50px;height:66px; transform:translateX(-50%); transition:top .7s cubic-bezier(.2,.9,.2,1), transform .25s; filter:drop-shadow(0 6px 4px #0008); z-index:2; }
+    .runner img { width:100%;height:100%;object-fit:contain;object-position:center bottom; }
     .runner.walk { animation:walk .22s 2 alternate } @keyframes walk { to { transform:translate(-50%,8px) scale(1.08,.92) } }
     .floor-chip { text-align:center; font-family:Georgia,"STKaiti",serif;font-weight:800; font-size:24px; color:#f1f4fa; text-shadow:none; background:none; border:0;padding:6px; }
     .floor-chip small { display:block; color:var(--muted); font-size:12px; margin-top:5px; font-weight:normal; }
@@ -49,11 +50,11 @@
   <main class="app">
     <aside class="side left">
       <section class="panel"><h2>下潜记录</h2><p>塔不会解释结果；这里只记录发生过什么。</p><div class="records" id="records"></div></section>
-      <section class="panel"><div class="dialogue"><div class="npc"><img src="assets/tower-keeper-pixel.png" alt="塔的看守" /></div><div><b>塔的看守</b><p id="sageText">概率是诚实的。它只是不在乎你。</p></div><div class="talk-choices"><button onclick="speak('money')">钱怎么来？</button><button onclick="speak('risk')">失败会怎样？</button><button onclick="speak('goal')">为什么要继续？</button></div></div></section>
+      <section class="panel"><div class="dialogue"><div class="npc"><img src="tower-keeper-pixel.png" alt="塔的看守" /></div><div><b>塔的看守</b><p id="sageText">概率是诚实的。它只是不在乎你。</p></div><div class="talk-choices"><button onclick="speak('money')">钱怎么来？</button><button onclick="speak('risk')">失败会怎样？</button><button onclick="speak('goal')">为什么要继续？</button></div></div></section>
     </aside>
     <section class="hero">
       <h1>不公正下潜</h1><div class="sub">一座讨厌你的塔。连续走完 9 段楼梯，抵达第 10 层。</div>
-      <div class="tower"><div class="shaft"><div class="world" id="world"><div class="glow"></div><div id="floors"></div><div class="runner" id="runner"><img src="assets/player-climber-pixel.png" alt="下潜者" /></div></div></div></div>
+      <div class="tower"><div class="shaft"><div class="world" id="world"><div class="glow"></div><div id="floors"></div><div class="runner" id="runner"><img src="player-climber-pixel.png" alt="下潜者" /></div></div></div></div>
       <div class="floor-chip">第 <span id="floor">1</span> 层 <small>连续下潜 <span id="streak">0</span> 次 · 目标：第 10 层</small></div>
       <div class="meters"><div class="stat">金币<b>🪙 <span id="coins">0</span></b></div><div class="stat">最高纪录<b><span id="best">1</span> 层</b></div></div>
       <div class="chance"><div class="labelrow"><span>下一段楼梯通过率</span><b id="chanceText">20%</b></div><div class="bar"><div class="fill" id="chanceFill"></div></div><small class="chance-detail" id="chanceDetail"></small></div>
